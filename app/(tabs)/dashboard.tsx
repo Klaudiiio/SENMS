@@ -9,7 +9,8 @@ export default function DashboardScreen() {
 
   const handleLogout = () => {
     logout();
-    router.push("/login");
+router.push("/login");
+
   };
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,10 +12,18 @@ import { useRouter } from "expo-router";
 import { useAuth } from "../../hooks/AuthContext";
 
 export default function LoginScreen() {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    // When user logs out (user becomes null), reset input fields
+    if (!user) {
+      setEmail("");
+      setPassword("");
+    }
+  }, [user]);
 
   const handleLogin = () => {
     if (!email || !password) {
@@ -29,7 +37,7 @@ export default function LoginScreen() {
       setEmail("");
       setPassword("");
       router.push("/dashboard");
-    } else {
+    } else if (!user) {
       Alert.alert("Invalid credentials", "Please sign up first or check your details.");
     }
   };

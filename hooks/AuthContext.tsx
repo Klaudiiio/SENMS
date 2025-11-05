@@ -22,6 +22,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const login = (email: string, password: string) => {
+    // Prevent logging in when a user is already logged in
+    if (user) {
+      alert("Please log out first before logging in a new user.");
+      return false;
+    }
+
+    // Validate credentials
     if (
       registeredUser &&
       email === registeredUser.email &&
@@ -37,6 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = () => {
+    console.log("User logged out");
     setUser(null);
   };
 
