@@ -5,105 +5,131 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../hooks/AuthContext'; // Access the AuthContext
 
 // Consistent Blue Color Scheme
-const PRIMARY_COLOR = '#4B00FF'; // Slightly darker purple/blue for primary actions
-const SECONDARY_COLOR = '#E5E5FF'; // Light background for secondary actions
+const PRIMARY_COLOR = '#4B00FF';
+const SECONDARY_COLOR = '#E5E5FF';
 
 /**
- * Renders the main Dashboard content (for authenticated users).
+ * Authenticated Dashboard content
  */
 const AuthenticatedDashboard = () => {
     const { logout, user } = useAuth();
     
-    // Placeholder content for the actual dashboard
     return (
-        <ScrollView style={styles.dashboardContainer}>
-            <Text style={styles.welcomeHeader}>Welcome, {user?.email || 'User'}!</Text>
-            <Text style={styles.dashboardText}>
-                This is your School Exam Noise Monitoring System (SENMS) Dashboard. 
-                Your alerts and monitoring data will appear here.
-            </Text>
+        <SafeAreaView style={styles.safeContainer}>
+            <ScrollView contentContainerStyle={styles.scrollContent}>
+                <View style={styles.dashboardContainer}>
+                    <Text style={styles.welcomeHeader}>Welcome {user?.email || 'User'}!</Text>
+                    <Text style={styles.dashboardText}>
+                        This is your School Exam Noise Monitoring System (SENMS) Dashboard. 
+                        Your alerts and monitoring data will appear here.
+                    </Text>
 
-            <View style={styles.card}>
-                <Text style={styles.cardTitle}>Current Status</Text>
-                <Text style={styles.cardContent}>Monitoring Active. Quiet Level: Normal.</Text>
-            </View>
+                    <View style={styles.card}>
+                        <Text style={styles.cardTitle}>Current Status</Text>
+                        <Text style={styles.cardContent}>Monitoring Active. Quiet Level: Normal.</Text>
+                    </View>
 
-            <View style={styles.card}>
-                <Text style={styles.cardTitle}>Recent Alerts</Text>
-                <Text style={styles.cardContent}>No noise violations recorded in the last 24 hours.</Text>
-            </View>
+                    <View style={styles.card}>
+                        <Text style={styles.cardTitle}>Recent Alerts</Text>
+                        <Text style={styles.cardContent}>No noise violations recorded in the last 24 hours.</Text>
+                    </View>
 
-            <Button title="Logout" onPress={logout} color="red" />
-        </ScrollView>
+                    <Button title="Logout" onPress={logout} color="red" />
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 };
 
 /**
- * Renders the Welcome/Auth Wall screen (when no user is logged in).
- * This component mirrors the design from your uploaded image.
+ * Welcome/Auth Wall screen
  */
 const WelcomeScreen = () => {
     const router = useRouter();
 
     return (
-        <View style={styles.welcomeContainer}>
-            {/* Logo and Icon Section */}
-            <View style={styles.welcomeLogoContainer}>
-                <Ionicons name="notifications-off-outline" size={80} color={PRIMARY_COLOR} />
-                <Text style={styles.welcomeLogoText}>SENMS</Text>
-                <Text style={styles.welcomeSubtitle}>
-                    School Exam Noise Monitoring System
-                </Text>
-                <Text style={styles.welcomeDescription}>
-                    Ensuring quiet, distraction-free exams.
-                </Text>
-            </View>
+        <SafeAreaView style={styles.safeContainer}>
+            <ScrollView contentContainerStyle={styles.scrollContent}>
+                <View style={styles.dashboardContainer}>
+                    <View style={styles.welcomeLogoContainer}>
+                        <Ionicons name="notifications-off-outline" size={80} color={PRIMARY_COLOR} />
+                        <Text style={styles.welcomeLogoText}>SENMS</Text>
+                        <Text style={styles.welcomeSubtitle}>
+                            School Exam Noise Monitoring System
+                        </Text>
+                        <Text style={styles.welcomeDescription}>
+                            Ensuring quiet, distraction-free exams.
+                        </Text>
+                    </View>
 
-            {/* Action Buttons */}
-            <View style={styles.buttonGroup}>
-                <TouchableOpacity
-                    style={[styles.button, { backgroundColor: PRIMARY_COLOR }]}
-                    onPress={() => router.push("/login")}
-                >
-                    <Text style={[styles.buttonText, { color: 'white' }]}>Log In</Text>
-                </TouchableOpacity>
+                    {/* Buttons aligned horizontally */}
+                    <View style={styles.buttonRow}>
+                        <TouchableOpacity
+                            style={[styles.button, { backgroundColor: PRIMARY_COLOR, flex: 1, marginRight: 10 }]}
+                            onPress={() => router.push("/login")}
+                        >
+                            <Text style={[styles.buttonText, { color: 'white' }]}>Log In</Text>
+                        </TouchableOpacity>
 
-                <TouchableOpacity
-                    style={[styles.button, { backgroundColor: SECONDARY_COLOR }]}
-                    onPress={() => router.push("/signup")}
-                >
-                    <Text style={[styles.buttonText, { color: PRIMARY_COLOR }]}>Sign Up</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+                        <TouchableOpacity
+                            style={[styles.button, { backgroundColor: SECONDARY_COLOR, flex: 1, marginLeft: 10 }]}
+                            onPress={() => router.push("/signup")}
+                        >
+                            <Text style={[styles.buttonText, { color: PRIMARY_COLOR }]}>Sign Up</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 };
 
 /**
- * Main component that decides which view to render based on authentication status.
+ * Main Dashboard component
  */
 export default function Dashboard() {
     const { user, loading } = useAuth();
 
     if (loading) {
-        // Show a blank view while the session is being checked
-        return <View style={styles.loadingContainer}><Text style={styles.loadingText}>Loading...</Text></View>;
+        return (
+            <SafeAreaView style={styles.loadingContainer}>
+                <Text style={styles.loadingText}>Loading...</Text>
+            </SafeAreaView>
+        );
     }
 
-    if (user) {
-        return <AuthenticatedDashboard />;
-    } else {
-        return <WelcomeScreen />;
-    }
+    return user ? <AuthenticatedDashboard /> : <WelcomeScreen />;
 }
 
 const styles = StyleSheet.create({
-    // --- Styles for the Authenticated Dashboard ---
-    dashboardContainer: {
+    // --- SafeAreaView ---
+    safeContainer: {
         flex: 1,
-        padding: 20,
-        backgroundColor: '#f4f4f9',
+        backgroundColor: '#f0f2f5',
+        padding: 10,
     },
+    scrollContent: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 20,
+    },
+
+    // --- Dashboard Container (main card) ---
+    dashboardContainer: {
+        width: '100%',
+        maxWidth: 500,
+        backgroundColor: '#fff',
+        borderRadius: 15,
+        padding: 20,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 4,
+    },
+
+    // --- Authenticated Dashboard ---
     welcomeHeader: {
         fontSize: 28,
         fontWeight: 'bold',
@@ -116,15 +142,15 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     card: {
-        backgroundColor: 'white',
+        backgroundColor: '#f9f9f9',
         padding: 15,
         borderRadius: 10,
         marginBottom: 15,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        shadowOpacity: 0.05,
+        shadowRadius: 3,
+        elevation: 2,
     },
     cardTitle: {
         fontSize: 18,
@@ -136,8 +162,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#555',
     },
-    
-    // --- Styles for Loading State ---
+
+    // --- Loading State ---
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -149,17 +175,10 @@ const styles = StyleSheet.create({
         color: '#888',
     },
 
-    // --- Styles for the Welcome/Auth Wall (from your image) ---
-    welcomeContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 30,
-        backgroundColor: '#fff',
-    },
+    // --- Welcome Screen ---
     welcomeLogoContainer: {
         alignItems: 'center',
-        marginBottom: 80,
+        marginBottom: 40,
     },
     welcomeLogoText: {
         fontSize: 42,
@@ -179,14 +198,15 @@ const styles = StyleSheet.create({
         marginTop: 5,
         textAlign: 'center',
     },
-    buttonGroup: {
+    buttonRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 20,
         width: '100%',
-        maxWidth: 300,
     },
     button: {
         paddingVertical: 15,
         borderRadius: 10,
-        marginBottom: 15,
         alignItems: 'center',
         justifyContent: 'center',
         shadowColor: "#000",
